@@ -64,7 +64,7 @@ if [ -z "$VAR0" ]; then
     az webapp log config -g "$AZRGNAME" -n "$AZAPPNAME" --web-server-logging filesystem --docker-container-logging filesystem
 fi
 az webapp config appsettings set -g "$AZRGNAME" -n "$AZAPPNAME" --settings "SCM_DO_BUILD_DURING_DEPLOYMENT=true" "AZTENANTID=$AZTENANTID" "AZAPPID=$AZAPPID"
-if [ -z "$BUILDTAG" ]; then
+if [ ! -z "$BUILDTAG" ]; then
     az webapp config appsettings set -g "$AZRGNAME" -n "$AZAPPNAME" --settings "BUILDTAG=$BUILDTAG"
 fi
 az webapp deployment source config-zip -g "$AZRGNAME" -n "$AZAPPNAME" --src ./deploy.zip
