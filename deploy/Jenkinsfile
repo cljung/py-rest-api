@@ -27,7 +27,7 @@ pipeline {
                     sh 'pwd'
                     sh 'export'
                     sh 'chmod +x ./deploy/az-webapp-create-py.sh'
-                    sh './deploy/az-webapp-create-py.sh -z .'
+                    sh './deploy/az-webapp-create-py.sh -z . -b $BUILD_TAG'
                 }
             }
         }
