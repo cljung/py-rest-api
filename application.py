@@ -33,7 +33,10 @@ itemList.append( {"id" : '003004005', 'Description' : 'Third Item'} )
 # public api to check connectivity
 @app.route("/", methods = ['GET'])
 def hello():
-    return "Hello from py-rest-api!<br/>Azure AD TenantID: " + tenantId + "<br/>Azure AD AppID: " + appId + "<br/>" + datetime.datetime.utcnow().isoformat()
+    buildTag = ""
+    if "BUILDTAG" in os.environ:
+       buildTag = "<br/>Build Tag: " + os.environ["BUILDTAG"]
+    return "Hello from py-rest-api!<br/>Azure AD TenantID: " + tenantId + "<br/>Azure AD AppID: " + appId + "<br/>" + datetime.datetime.utcnow().isoformat() + buildTag
 
 # api that requires auth and returns info about user
 @app.route("/api/echo", methods = ['GET'])
