@@ -40,7 +40,7 @@ done
 echo "RG=$AZRGNAME, LOCATION=$AZLOCATION, PLAN=$AZAPPPLAN, APP=$AZAPPNAME, ZIPFOLDER=$ZIPFOLDER, tenantid=$AZTENANTID, AppID=$AZAPPID, BuildTag=$BUILDTAG"
 
 rm -f ./deploy.zip
-zip -r ./deploy.zip $ZIPFOLDER
+zip -r ./deploy.zip $ZIPFOLDER -x ./.git\* ./.vscode\* ./deploy\*
 
 # create the RG if it doesn't exists
 if [ $(az group exists -n $AZRGNAME) == 'false' ]; then
