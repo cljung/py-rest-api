@@ -41,6 +41,15 @@ def get_kid(token):
     except KeyError:
         raise InvalidAuthorizationToken('missing kid')
 
+def get_alg(token):
+    headers = getUnverifiedHeader(token) #jwt.get_unverified_header(token)
+    if not headers:
+        raise InvalidAuthorizationToken('missing headers')
+    try:
+        return headers['alg']
+    except KeyError:
+        raise InvalidAuthorizationToken('missing alg')
+
 def get_jwk(kid):
     for jwk in jwks['keys']:
         if jwk['kid'] == kid:
@@ -51,14 +60,15 @@ def get_public_key(token):
     return rsa_pem_from_jwk( get_jwk( get_kid(token) ) )
 
 def validate_jwt(jwt_to_validate):
+    alg = get_alg(jwt_to_validate) # RS256
     public_key = get_public_key(jwt_to_validate)
 
     jwt_decoded = jwt.decode(jwt_to_validate,
-                         public_key,
-                         verify=True,
-                         algorithms=['RS256'],
-                         audience=valid_audiences,
-                         issuer=issuer)
+                            public_key,
+                            verify=True,
+                            algorithms=[alg],
+                            audience=valid_audiences,
+                            issuer=issuer)
 
     # do what you wish with decoded token:
     # if we get here, the JWT is validated
@@ -78,7 +88,7 @@ def initAzureAD( tenantId, clientId ):
     global valid_audiences
     issuer = "https://sts.windows.net/" + tenantId + "/"
     valid_audiences.append( clientId )
-    initWellKnownConfig( 'https://login.microsoftonline.com/' + tenantId + '/.well-known/openid-configuration' )
+    initWellKnownConfig( 'https://login.microsoftonline.com/' + tenantId + '/v2.0/.well-known/openid-configuration' )
 
 def checkAuthorization(requiredScopes=None):
     # Authorization: Bearer AbCdEf123456

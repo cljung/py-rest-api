@@ -36,5 +36,21 @@
                 ""
             ],
         },        
+        {
+            "name": "Python: Current File (B2C)",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${fileDirname}",
+            "env": {
+                "FLASK_APP": "application.py",
+                "AZAPPID": "00000003-0000-0000-c000-000000000000",
+                "AZTENANTID": "a9a65d1b-2021-46b6-a282-a152e6246ef6"
+            },
+            "args": [
+                ""
+            ],
+        },        
     ]
 }
