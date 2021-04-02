@@ -15,6 +15,7 @@ app = Flask(__name__)
 log = logging.getLogger() #'werkzeug')
 log.setLevel(logging.INFO)
 
+wellKnownMetadataEndpoint = ""
 tenantId = ""
 appId = ""
 args = None
@@ -36,7 +37,10 @@ def hello():
     buildTag = ""
     if "BUILDTAG" in os.environ:
        buildTag = "<br/>Build Tag: " + os.environ["BUILDTAG"]
-    return "Hello from py-rest-api!<br/>Azure AD TenantID: " + tenantId + "<br/>Azure AD AppID: " + appId + "<br/>" + datetime.datetime.utcnow().isoformat() + buildTag
+    if tenantId is not  None:
+       return "Hello from py-rest-api!<br/>Azure AD TenantID: " + tenantId + "<br/>Azure AD AppID: " + appId + "<br/>" + datetime.datetime.utcnow().isoformat() + buildTag
+    else:
+       return "Hello from py-rest-api!<br/>Authority: " + wellKnownMetadataEndpoint + "<br/>API AppID: " + appId + "<br/>" + datetime.datetime.utcnow().isoformat() + buildTag
 
 # api that requires auth and returns info about user
 @app.route("/api/echo", methods = ['GET'])
@@ -45,7 +49,7 @@ def echoApi():
     if resp:
        return resp
     expTime = datetime.datetime.fromtimestamp( jwt_decoded['exp'] ).isoformat()
-    return "Hello " + jwt_decoded['upn'] + "! Your access token is valid until " + expTime + "Z"
+    return "Hello " + jwt_decoded['name'] + "! Your access token is valid until " + expTime
 
 # api that returns a list of items
 @app.route('/api/items', methods = ['GET'])
@@ -132,10 +136,17 @@ def deleteItem(id):
 
     return restapihelper.generateItemNotFoundResponse( id )
 
-tenantId = os.environ['AZTENANTID']
 appId = os.environ['AZAPPID']
 
-jwtvalidator.initAzureAD( tenantId, appId )
+# set AZTENANTID (guid) for an Azure AD authority. 
+# do not set AZTENANTID and set the well-known metadata endpoint instead for an Azure AD B2C authority  
+if "AZTENANTID" in os.environ: 
+   tenantId = os.environ['AZTENANTID']
+   jwtvalidator.initAzureAD( tenantId, appId )
+else:
+   tenantId = None
+   wellKnownMetadataEndpoint = os.environ['METADATA_ENDPOINT']
+   jwtvalidator.initAuthority( wellKnownMetadataEndpoint, appId )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)

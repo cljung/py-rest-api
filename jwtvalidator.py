@@ -75,10 +75,12 @@ def validate_jwt(jwt_to_validate):
     return jwt_decoded
 
 def initWellKnownConfig( urlWellKnown ):
+    global issuer 
     # get the well known info & get the public keys
     resp = requests.get(url=urlWellKnown)
     well_known_openid_config_data = resp.json()
     jwks_uri = well_known_openid_config_data['jwks_uri']
+    issuer = well_known_openid_config_data['issuer']
     # get the discovery keys
     resp = requests.get(url=jwks_uri)
     jwks.update( resp.json() )
@@ -86,9 +88,14 @@ def initWellKnownConfig( urlWellKnown ):
 def initAzureAD( tenantId, clientId ):
     global issuer 
     global valid_audiences
-    issuer = "https://sts.windows.net/" + tenantId + "/"
     valid_audiences.append( clientId )
     initWellKnownConfig( 'https://login.microsoftonline.com/' + tenantId + '/v2.0/.well-known/openid-configuration' )
+    issuer = "https://sts.windows.net/" + tenantId + "/"
+
+def initAuthority( wellKnownMetadataEndpoint, clientId ):
+    global issuer 
+    valid_audiences.append( clientId )
+    initWellKnownConfig( wellKnownMetadataEndpoint )
 
 def checkAuthorization(requiredScopes=None):
     # Authorization: Bearer AbCdEf123456
