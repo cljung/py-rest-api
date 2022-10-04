@@ -3,7 +3,7 @@ cffi==1.11.5
 cryptography==2.3.1
 idna==2.7
 pycparser==2.19
-PyJWT==1.6.4
+PyJWT==2.4.0
 six==1.11.0
 requests==2.21.0
 cryptography==3.2
