@@ -7,6 +7,6 @@ PyJWT==2.4.0
 six==1.11.0
 requests==2.21.0
 Flask==1.0.2
-Werkzeug==0.15.5
+Werkzeug==2.2.3
 gevent==1.4.0
 configparser==3.7.4
