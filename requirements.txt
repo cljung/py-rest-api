@@ -1,6 +1,6 @@
 asn1crypto==0.24.0
 cffi==1.11.5
-cryptography==39.0.1
+cryptography==41.0.2
 idna==2.7
 pycparser==2.19
 PyJWT==2.4.0
